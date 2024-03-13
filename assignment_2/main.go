@@ -31,7 +31,7 @@ type Item struct {
 var db *gorm.DB
 
 func main() {
-	// Koneksi ke database
+	// db connection
 	dsn := "host=localhost user=postgres password=postgres dbname=db_latihan port=5434 sslmode=disable TimeZone=Asia/Jakarta"
 	var err error
 	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
@@ -39,22 +39,21 @@ func main() {
 		log.Fatalf("Error connecting to database: %v", err)
 	}
 
-	// Migrasi model
+	// model migration
 	err = db.AutoMigrate(&Order{}, &Item{})
 	if err != nil {
 		log.Fatalf("Error migrating database: %v", err)
 	}
 
-	// Membuat instance router Gin
 	r := gin.Default()
 
-	// Definisi endpoint
+	// routes endpoint
 	r.POST("/orders", createOrder)
 	r.GET("/orders", getOrders)
 	r.PUT("/orders/:id", updateOrder)
 	r.DELETE("/orders/:id", deleteOrder)
 
-	// Menjalankan server pada port 8080
+	// start server at port 8080
 	err = r.Run(":8080")
 	if err != nil {
 		log.Fatalf("Error starting server: %v", err)
